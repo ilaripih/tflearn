@@ -306,7 +306,8 @@ class VocabularyProcessor(object):
 def build_hdf5_image_dataset(target_path, image_shape, output_path='dataset.h5',
                              mode='file', categorical_labels=True,
                              normalize=True, grayscale=False,
-                             files_extension=None, chunks=False, image_base_path='', float_labels=False):
+                             files_extension=None, chunks=False, image_base_path='',
+                             float_labels=False, resize_mode=Image.ANTIALIAS):
     """ Build HDF5 Image Dataset.
 
     Build an HDF5 dataset by providing either a root folder or a plain text
@@ -379,6 +380,7 @@ def build_hdf5_image_dataset(target_path, image_shape, output_path='dataset.h5',
             If chunks is 'True' a sensitive default will be computed.
         image_base_path: `str`. Base path for the images listed in the file mode.
         float_labels: `bool`. Read float labels instead of integers in file mode.
+        resize_mode: `str`. PIL resize mode.
 
     """
     import h5py
@@ -423,7 +425,7 @@ def build_hdf5_image_dataset(target_path, image_shape, output_path='dataset.h5',
         img = load_image(images[i])
         width, height = img.size
         if width != image_shape[0] or height != image_shape[1]:
-            img = resize_image(img, image_shape[0], image_shape[1])
+            img = resize_image(img, image_shape[0], image_shape[1], resize_mode=resize_mode)
         if grayscale:
             img = convert_color(img, 'L')
         elif img.mode == 'L' or img.mode == 'RGBA':
